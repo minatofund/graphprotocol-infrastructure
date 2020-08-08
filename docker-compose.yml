@@ -7,8 +7,44 @@ networks:
 volumes:
     prometheus_data: {}
     grafana_data: {}
+    postgres_data: {}
 
 services:
+  graph-node:
+    image: graphprotocol/graph-node
+    container_name: graph-node
+    depends_on:
+      - postgres
+    environment:
+      postgres_host: postgres:5432
+      postgres_user: ${DB_USER:-graph-node}
+      postgres_pass: ${DB_PASS:-let-me-in}
+      postgres_db: ${DB_NAME:-graph-node}
+      ipfs: '${IPFS_ENDPOINT:-https://testnet.thegraph.com/ipfs/}'
+      ethereum: 'mainnet:${ETHEREUM_MAINNET:-http://95.217.193.89:9545}'
+      ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
+      RUST_LOG: info
+    ports:
+      - 127.0.0.1:8020:8020
+    expose:
+      - 8000
+      - 8001
+    networks:
+      - monitor-net
+  postgres:
+    image: postgres
+    container_name: postgres
+    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+    environment:
+      POSTGRES_USER: ${DB_USER:-graph-node}
+      POSTGRES_PASSWORD: ${DB_PASS:-let-me-in}
+      POSTGRES_DB: ${DB_NAME:-graph-node}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - monitor-net
+    expose:
+      - 5432
 
   prometheus:
     image: prom/prometheus:v2.20.0
@@ -94,6 +130,11 @@ services:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_DISABLE_BRUTE_FORCE_LOGIN_PROTECTION=true
+      - postgres_host=postgres
+      - postgres_user=${DB_USER:-graph-node}
+      - postgres_pass=${DB_PASS:-let-me-in}
+      - postgres_db=${DB_NAME:-graph-node}
     restart: unless-stopped
     expose:
       - 3000
