@@ -1,20 +1,28 @@
 dockprom
 ========
 
-A monitoring solution for Docker hosts and containers with [Prometheus](https://prometheus.io/), [Grafana](http://grafana.org/), [cAdvisor](https://github.com/google/cadvisor),
+A monitoring solution for hosting a graph node on a single Docker host with [Prometheus](https://prometheus.io/), [Grafana](http://grafana.org/), [cAdvisor](https://github.com/google/cadvisor),
 [NodeExporter](https://github.com/prometheus/node_exporter) and alerting with [AlertManager](https://github.com/prometheus/alertmanager).
 
-***If you're looking for the Docker Swarm version please go to [stefanprodan/swarmprom](https://github.com/stefanprodan/swarmprom)***
+The monitoring configuration adapted the template by the graph team in the [mission control repository](https://github.com/graphprotocol/mission-control-indexer).
+
+The main difference is that it's cheaper. the full deployment on google cloud costs $500 per month while this simple docker compose script can be hosted on any bare metal server with more than 10 cores at about the same performance. The drawdown is that no backups are created.
+
+The data is stored in named volumes on the docker host and can be exported / copied over to a bigger machine once mpore performance is needed.
+
+The minimum competitive configuration I would assume to be the CPX51 VPS at [Hetzner](https://hetzner.cloud/?ref=uqph3EQTVIIR). By signing up using my referral link you can save 20€ and I get 10€ bonus for more experiments. 
+
+You will need a achieve node to complete the testnet challenge. For testing purposes I can offer mine but make no guarantees regarding performance.
 
 ## Install
 
-Clone this repository on your Docker host, cd into dockprom directory and run compose up:
+Clone this repository on your Docker host, cd into graphprotocol-infrastructure directory and run compose up:
 
 ```bash
-git clone https://github.com/stefanprodan/dockprom
-cd dockprom
+git clone https://github.com/butterfly-academy/graphprotocol-infrastructure.git
+cd graphprotocol-infrastucture
 
-ADMIN_USER=admin ADMIN_PASSWORD=admin docker-compose up -d
+ADMIN_USER=admin ADMIN_PASSWORD=admin ETHEREUM_MAINNET="http://95.217.193.89:9545" docker-compose up -d
 ```
 
 Prerequisites:
@@ -22,8 +30,17 @@ Prerequisites:
 * Docker Engine >= 1.13
 * Docker Compose >= 1.11
 
+On a fresh Ubuntu server login via ssh and execute the following commands:
+
+```bash
+apt update -y
+apt install docker-compose httpie
+```
+
 Containers:
 
+* Graph Node (indexer / query node) `http://<host-ip>:8000`
+* Postgres Database
 * Prometheus (metrics database) `http://<host-ip>:9090`
 * Prometheus-Pushgateway (push acceptor for ephemeral and batch jobs) `http://<host-ip>:9091`
 * AlertManager (alerts management) `http://<host-ip>:9093`
@@ -31,6 +48,21 @@ Containers:
 * NodeExporter (host metrics collector)
 * cAdvisor (containers metrics collector)
 * Caddy (reverse proxy and basic auth provider for prometheus and alertmanager)
+
+## Indexing Subgraphs
+
+Connect via ssh to the server and issue the following commands to index the subraphs required for phase 0 of the testnet challenge.
+
+```bash
+http post 127.0.0.1:8020 jsonrpc="2.0" method="subgraph_create" id="2" params:='{"name": "synthetixio-team/synthetix"}'
+http post 127.0.0.1:8020 jsonrpc="2.0" id="2" method="subgraph_deploy" params:='{"name": "synthetixio-team/synthetix", "ipfs_hash": "Qme2hDXrkBpuXAYEuwGPAjr6zwiMZV4FHLLBa3BHzatBWx"}'
+
+http post 127.0.0.1:8020 jsonrpc="2.0" method="subgraph_create" id="2" params:='{"name": "uniswap/uniswap-v2"}'
+http post 127.0.0.1:8020 jsonrpc="2.0" id="2" method="subgraph_deploy" params:='{"name": "uniswap/uniswap-v2", "ipfs_hash": "QmXKwSEMirgWVn41nRzkT3hpUBw29cp619Gx58XW6mPhZP"}'
+
+http post 127.0.0.1:8020 jsonrpc="2.0" method="subgraph_create" id="1" params:='{"name": "molochventures/moloch"}'
+http post 127.0.0.1:8020 jsonrpc="2.0" id="1" method="subgraph_deploy" params:='{"name": "molochventures/moloch", "ipfs_hash": "QmTXzATwNfgGVukV1fX2T6xw9f6LAYRVWpsdXyRWzUR2H9"}'
+```
 
 ## Setup Grafana
 
@@ -53,12 +85,7 @@ If you want to change the password, you have to remove this entry, otherwise the
 - grafana_data:/var/lib/grafana
 ```
 
-Grafana is preconfigured with dashboards and Prometheus as the default data source:
-
-* Name: Prometheus
-* Type: Prometheus
-* Url: http://prometheus:9090
-* Access: proxy
+Grafana is preconfigured with dashboards and Prometheus plus Postgres as the default data source:
 
 ***Docker Host Dashboard***
 
