@@ -24,11 +24,15 @@ services:
       ethereum: '${ETHEREUM:-mainnet:http://95.217.193.89:9545}'
       ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
       RUST_LOG: info
+      VIRTUAL_HOST: query.butterfly.academy
+      LETSENCRYPT_HOST: query.butterfly.academy
+      VIRTUAL_PORT: 8000
+      LETSENCRYPT_EMAIL: sebastian@heyden.eu
     ports:
       - 127.0.0.1:8020:8020
-      - 8000:8000
       - 8001:8001
     expose:
+      - 8000
       - 8030
       - 8040
     networks:
@@ -137,6 +141,10 @@ services:
       - postgres_user=${DB_USER:-graph-node}
       - postgres_pass=${DB_PASS:-let-me-in}
       - postgres_db=${DB_NAME:-graph-node}
+      - VIRTUAL_HOST=dashboard.butterfly.academy
+      - LETSENCRYPT_HOST=dashboard.butterfly.academy
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_EMAIL=sebastian@heyden.eu
     restart: unless-stopped
     expose:
       - 3000
@@ -160,9 +168,9 @@ services:
     image: stefanprodan/caddy
     container_name: caddy
     ports:
-      - "3000:3000"
+      #- "3000:3000"
       #- "8000:8000"
-      #- "8001:8001"
+      - "8001:8001"
       - "9090:9090"
       - "9093:9093"
       - "9091:9091"
