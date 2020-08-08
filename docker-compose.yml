@@ -29,6 +29,8 @@ services:
     expose:
       - 8000
       - 8001
+      - 8030
+      - 8040
     networks:
       - monitor-net
   postgres:
