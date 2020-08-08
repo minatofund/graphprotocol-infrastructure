@@ -1,4 +1,4 @@
-dockprom
+graphprotocol-infrastructure
 ========
 
 A monitoring solution for hosting a graph node on a single Docker host with [Prometheus](https://prometheus.io/), [Grafana](http://grafana.org/), [cAdvisor](https://github.com/google/cadvisor),
@@ -22,7 +22,7 @@ Clone this repository on your Docker host, cd into graphprotocol-infrastructure 
 git clone https://github.com/butterfly-academy/graphprotocol-infrastructure.git
 cd graphprotocol-infrastucture
 
-ADMIN_USER=admin ADMIN_PASSWORD=admin ETHEREUM_MAINNET="http://95.217.193.89:9545" docker-compose up -d
+ADMIN_USER=admin ADMIN_PASSWORD=admin ETHEREUM_NODE="mainnet:http://95.217.193.89:9545 rinkeby:http://95.217.193.89:6545:" ETHEREUM_START_BLOCK=7710671 docker-compose up -d
 ```
 
 Prerequisites:
