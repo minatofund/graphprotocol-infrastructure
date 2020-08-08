@@ -38,6 +38,11 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ['graph-node:8040']
+  
+  - job_name: 'grafana'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['grafana:3000']
 
 alerting:
   alertmanagers:
