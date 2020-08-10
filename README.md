@@ -62,6 +62,9 @@ http post 127.0.0.1:8020 jsonrpc="2.0" id="2" method="subgraph_deploy" params:='
 
 http post 127.0.0.1:8020 jsonrpc="2.0" method="subgraph_create" id="1" params:='{"name": "molochventures/moloch"}'
 http post 127.0.0.1:8020 jsonrpc="2.0" id="1" method="subgraph_deploy" params:='{"name": "molochventures/moloch", "ipfs_hash": "QmTXzATwNfgGVukV1fX2T6xw9f6LAYRVWpsdXyRWzUR2H9"}'
+
+http post 127.0.0.1:8020 jsonrpc="2.0" method="subgraph_create" id="4" params:='{"name": "jannis/gravity"}'
+http post 127.0.0.1:8020 jsonrpc="2.0" id="4" method="subgraph_deploy" params:='{"name": "jannis/gravity", "ipfs_hash": "QmbeDC4G8iPAUJ6tRBu99vwyYkaSiFwtXWKwwYkoNphV4X"}'
 ```
 
 ## Debugging
