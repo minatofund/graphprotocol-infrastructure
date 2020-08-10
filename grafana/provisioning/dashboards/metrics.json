@@ -1205,13 +1205,28 @@
       "renderer": "flot",
       "repeat": "subgraph_hash",
       "repeatDirection": "v",
-      "scopedVars": {
-        "subgraph_hash": {
-          "selected": true,
-          "text": "QmWVRSE59uqfuanp2goVbAoXqwc6wfVfYnxg7bGswjP9mo",
-          "value": "QmWVRSE59uqfuanp2goVbAoXqwc6wfVfYnxg7bGswjP9mo"
-        }
-      },
+      "scopedVars":  [         
+	{
+            "selected": true,
+            "text": "Moloch",
+            "value": "QmTXzATwNfgGVukV1fX2T6xw9f6LAYRVWpsdXyRWzUR2H9"
+          },
+          {
+            "selected": false,
+            "text": "Synthetix",
+            "value": "Qme2hDXrkBpuXAYEuwGPAjr6zwiMZV4FHLLBa3BHzatBWx"
+          },
+          {
+            "selected": false,
+            "text": "Uniswap",
+            "value": "QmXKwSEMirgWVn41nRzkT3hpUBw29cp619Gx58XW6mPhZP"
+          },
+          {
+            "selected": false,
+            "text": "Gravity",
+            "value": "QmbeDC4G8iPAUJ6tRBu99vwyYkaSiFwtXWKwwYkoNphV4X"
+          }
+      ],
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
@@ -1800,8 +1815,8 @@
         "allValue": null,
         "current": {
           "tags": [],
-          "text": "QmWVRSE59uqfuanp2goVbAoXqwc6wfVfYnxg7bGswjP9mo",
-          "value": "QmWVRSE59uqfuanp2goVbAoXqwc6wfVfYnxg7bGswjP9mo"
+          "text": "Moloch",
+          "value": "QmTXzATwNfgGVukV1fX2T6xw9f6LAYRVWpsdXyRWzUR2H9"
         },
         "datasource": "postgres",
         "definition": "select subgraph from deployment_schemas where id > 0",
@@ -1814,8 +1829,23 @@
         "options": [
           {
             "selected": true,
-            "text": "QmWVRSE59uqfuanp2goVbAoXqwc6wfVfYnxg7bGswjP9mo",
-            "value": "QmWVRSE59uqfuanp2goVbAoXqwc6wfVfYnxg7bGswjP9mo"
+            "text": "Moloch",
+            "value": "QmTXzATwNfgGVukV1fX2T6xw9f6LAYRVWpsdXyRWzUR2H9"
+          },
+          {
+            "selected": false,
+            "text": "Synthetix",
+            "value": "Qme2hDXrkBpuXAYEuwGPAjr6zwiMZV4FHLLBa3BHzatBWx"
+          },
+          {
+            "selected": false,
+            "text": "Uniswap",
+            "value": "QmXKwSEMirgWVn41nRzkT3hpUBw29cp619Gx58XW6mPhZP"
+          },
+          {
+            "selected": false,
+            "text": "Gravity",
+            "value": "QmbeDC4G8iPAUJ6tRBu99vwyYkaSiFwtXWKwwYkoNphV4X"
           }
         ],
         "query": "select subgraph from deployment_schemas where id > 0",
@@ -1918,9 +1948,8 @@
   },
   "timezone": "",
   "title": "Subgraph Indexing Metrics",
-  "uid": "e0115cae-staging-production",
   "variables": {
     "list": []
   },
-  "version": 2
+  "version": 3
 }
