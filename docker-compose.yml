@@ -21,7 +21,7 @@ services:
       postgres_pass: ${DB_PASS:-let-me-in}
       postgres_db: ${DB_NAME:-graph-node}
       ipfs: '${IPFS_ENDPOINT:-https://testnet.thegraph.com/ipfs/}'
-      ethereum: '${ETHEREUM:-mainnet:http://95.217.193.89:9545}'
+      ethereum: '${ETHEREUM}'
       ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
       RUST_LOG: info
     ports:
