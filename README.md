@@ -37,6 +37,9 @@ cd graphprotocol-infrastructure
 ADMIN_USER=admin ADMIN_PASSWORD=change_me ETHEREUM="mainnet:<ETH_RPC_URL>"  ETHEREUM_START_BLOCK=7710671 docker-compose up -d
 ```
 
+The ADMIN_USER and ADMIN_PASSWORD will be used by Grafana, Prometheus and AlertManager.
+
+
 Containers:
 
 * Graph Node (indexer / query node) `http://<host-ip>:8000`
