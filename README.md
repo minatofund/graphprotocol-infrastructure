@@ -16,15 +16,6 @@ You will need a achieve node to complete the testnet challenge. For testing purp
 
 ## Install
 
-Clone this repository on your Docker host, cd into graphprotocol-infrastructure directory and run compose up:
-
-```bash
-git clone https://github.com/butterfly-academy/graphprotocol-infrastructure.git
-cd graphprotocol-infrastucture
-
-ADMIN_USER=admin ADMIN_PASSWORD=change_me ETHEREUM_NODE="mainnet:<ETH_RPC_URL>"  ETHEREUM_START_BLOCK=7710671 docker-compose up -d
-```
-
 Prerequisites:
 
 * Docker Engine >= 1.13
@@ -34,7 +25,16 @@ On a fresh Ubuntu server login via ssh and execute the following commands:
 
 ```bash
 apt update -y
-apt install docker-compose httpie
+apt install docker.io docker-compose httpie
+```
+
+Clone this repository on your Docker host, cd into graphprotocol-infrastructure directory and run compose up:
+
+```bash
+git clone https://github.com/butterfly-academy/graphprotocol-infrastructure.git
+cd graphprotocol-infrastructure
+
+ADMIN_USER=admin ADMIN_PASSWORD=change_me ETHEREUM="mainnet:<ETH_RPC_URL>"  ETHEREUM_START_BLOCK=7710671 docker-compose up -d
 ```
 
 Containers:
