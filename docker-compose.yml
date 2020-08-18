@@ -24,6 +24,7 @@ services:
       ethereum: '${ETHEREUM}'
       ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
       RUST_LOG: info
+    restart: unless-stopped
     ports:
       - 127.0.0.1:8020:8020
       - 8000:8000
@@ -37,6 +38,7 @@ services:
     image: postgres
     container_name: postgres
     command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER:-graph-node}
       POSTGRES_PASSWORD: ${DB_PASS:-let-me-in}
