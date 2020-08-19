@@ -14,6 +14,18 @@ The minimum competitive configuration I would assume to be the CPX51 VPS at [Het
 
 You will need a achieve node to complete the testnet challenge. For testing purposes I can offer mine but make no guarantees regarding performance.
 
+## Get a domain 
+
+To enable SSL on your host you should get a domain.
+
+You can use any domain and any regsitrar that allowes you to edit DNS records to point subdomains to your IP address.
+
+For a free option go to [dotTK](https://www.dot.tk) and find a free domain name. Create a account and complete the registration.
+
+In the last step choose "use dns" and enter the IP address of your server for 2 subdomains like in the picture. You can choose up to 12 months for free.
+
+![dotTK checkout](dottk_checkoput.png)
+
 ## Install
 
 Prerequisites:
@@ -34,11 +46,11 @@ Clone this repository on your Docker host, cd into graphprotocol-infrastructure 
 git clone https://github.com/butterfly-academy/graphprotocol-infrastructure.git
 cd graphprotocol-infrastructure
 
-ADMIN_USER=admin ADMIN_PASSWORD=change_me ETHEREUM="mainnet:<ETH_RPC_URL>"  ETHEREUM_START_BLOCK=7710671 docker-compose up -d
+EMAIL=my@email INDEX_HOST=index.mydomain.tk QUERY_HOST=query.mydomain.tk ADMIN_USER=admin ADMIN_PASSWORD=change_me ETHEREUM="mainnet:<ETH_RPC_URL>"  ETHEREUM_START_BLOCK=7710671 docker-compose up -d
 ```
 
 The ADMIN_USER and ADMIN_PASSWORD will be used by Grafana, Prometheus and AlertManager.
-
+QUERY_HOST and INDEX_HOST should point to the subdomains created earlier.
 
 Containers:
 
