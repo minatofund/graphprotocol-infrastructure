@@ -20,7 +20,9 @@ To enable SSL on your host you should get a domain.
 
 You can use any domain and any regsitrar that allowes you to edit DNS records to point subdomains to your IP address.
 
-For a free option go to [dotTK](https://www.dot.tk) and find a free domain name. Create a account and complete the registration.
+For a free option go to [dotTK](http://www.dot.tk) and find a free domain name. Create a account and complete the registration. 
+
+Hint: the shop is a bit broken. On the first try to checkout the shopping cart was empty for me, but there is a link to go back to the search results. Click this to go back, put the domain in the shopping cart again, next time it worked.
 
 In the last step choose "use dns" and enter the IP address of your server for 2 subdomains like in the picture. You can choose up to 12 months for free.
 
