@@ -28,6 +28,8 @@ In the last step choose "use dns" and enter the IP address of your server for 2 
 
 ![dotTK checkout](/dottk_checkout.png)
 
+Under "Service > My Domains > Manage Domain > Manage Freenom DNS" you can add more subdomains later for e.g. the Grafana dashboard.
+
 ## Install
 
 Prerequisites:
