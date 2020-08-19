@@ -27,9 +27,9 @@ services:
       ethereum: '${ETHEREUM}'
       ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
       RUST_LOG: info
-      VIRTUAL_HOST: ${QUERY_HOST:-query.butterfly.academy}
+      VIRTUAL_HOST: ${QUERY_HOST:-query.butterflylabs.tk}
       VIRTUAL_PORT: 8000
-      LETSENCRYPT_HOST: ${QUERY_HOST:-query.butterfly.academy}
+      LETSENCRYPT_HOST: ${QUERY_HOST:-query.butterflylabs.tk}
     restart: unless-stopped
     ports:
       - 127.0.0.1:8020:8020
@@ -67,7 +67,7 @@ services:
     restart: unless-stopped
     environment:
       NGINX_PROXY_CONTAINER: nginx-proxy
-      DEFAULT_EMAIL: ${EMAIL:-sebastian@heyden.eu}
+      DEFAULT_EMAIL: ${EMAIL:-sebastian.heyden@gmail.com}
   postgres:
     image: postgres
     container_name: postgres
@@ -173,8 +173,9 @@ services:
       - postgres_user=${DB_USER:-graph-node}
       - postgres_pass=${DB_PASS:-let-me-in}
       - postgres_db=${DB_NAME:-graph-node}
-      - VIRTUAL_HOST=dashboard.butterfly.academy
+      - VIRTUAL_HOST=${INDEX_HOST:-index.butterflylabs.tk}
       - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=${INDEX_HOST:-index.butterflylabs.tk}
     restart: unless-stopped
     expose:
       - 3000
