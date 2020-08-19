@@ -60,8 +60,10 @@ services:
     container_name: nginx-ssl
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    volumes_from:
-      - nginx-proxy:rw
+      - nginx_certs:/etc/nginx/certs
+      - nginx_vhost:/etc/nginx/vhost.d
+      - nginx_html:/usr/share/nginx/html
+    restart: unless-stopped
   postgres:
     image: postgres
     container_name: postgres
