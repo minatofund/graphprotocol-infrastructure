@@ -42,7 +42,7 @@ groups:
 - name: containers
   rules:
   - alert: graphnode_down
-    expr: (time() - container_last_seen{name="graph-node"}) > 5
+    expr: absence(time() - container_last_seen{name="graph-node"})
     for: 30s
     labels:
       severity: critical
@@ -69,8 +69,8 @@ groups:
       description: "Graph Node memory consumption is at {{ humanize $value}}."
 
   - alert: postgres_down
-    expr: (time() - container_last_seen{name="postgres"}) > 5
-    for: 30s
+    expr: absence(time() - container_last_seen{name="postgres"})
+    for: 10s
     labels:
       severity: critical
     annotations:
@@ -96,7 +96,7 @@ groups:
       description: "Postgres memory consumption is at {{ humanize $value}}."
 
   - alert: nginx_down
-    expr: (time() - container_last_seen{name="nginx-proxy"}) > 5
+    expr: absence(time() - container_last_seen{name="nginx-proxy"})
     for: 30s
     labels:
       severity: critical
@@ -123,7 +123,7 @@ groups:
       description: "Nginx memory consumption is at {{ humanize $value}}."
 
   - alert: caddy_down
-    expr: (time() - container_last_seen{name="caddy"}) > 5
+    expr: absence(time() - container_last_seen{name="caddy"})
     for: 30s
     labels:
       severity: critical
