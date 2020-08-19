@@ -66,8 +66,8 @@ services:
       - monitor-net
     restart: unless-stopped
     environment:
-      DEFAULT_EMAIL: ${EMAIL:-sebastian@heyden.eu}"
       NGINX_PROXY_CONTAINER: nginx-proxy
+      DEFAULT_EMAIL: ${EMAIL:-sebastian@heyden.eu}
   postgres:
     image: postgres
     container_name: postgres
