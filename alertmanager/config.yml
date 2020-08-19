@@ -1,5 +1,5 @@
 route:
-    receiver: 'slack'
+    receiver: 'email'
 
 receivers:
     - name: 'slack'
@@ -9,3 +9,12 @@ receivers:
             username: 'Prometheus'
             channel: '#<channel-name>'
             api_url: 'https://hooks.slack.com/services/<webhook-id>'
+
+    - name: 'email'
+      email_configs:
+          - to: sebastian.heyden@gmail.com
+            from: monitor@heyden.eu
+            smarthost: mail2.web-server.biz
+            auth_username: monitor@heyden.eu
+            auth_password: 9WLOVoRR8SpU
+            require_tls: true
