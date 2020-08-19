@@ -21,17 +21,18 @@ services:
       postgres_pass: ${DB_PASS:-let-me-in}
       postgres_db: ${DB_NAME:-graph-node}
       ipfs: '${IPFS_ENDPOINT:-https://testnet.thegraph.com/ipfs/}'
-      ethereum: '${ETHEREUM:-mainnet:http://95.217.193.89:9545}'
+      ethereum: '${ETHEREUM}'
       ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
       RUST_LOG: info
       VIRTUAL_HOST: query.butterfly.academy
       LETSENCRYPT_HOST: query.butterfly.academy
       VIRTUAL_PORT: 8000
       LETSENCRYPT_EMAIL: sebastian@heyden.eu
+    restart: unless-stopped
     ports:
       - 127.0.0.1:8020:8020
-      - 8001:8001
     expose:
+      - 8001
       - 8000
       - 8030
       - 8040
@@ -41,6 +42,7 @@ services:
     image: postgres
     container_name: postgres
     command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER:-graph-node}
       POSTGRES_PASSWORD: ${DB_PASS:-let-me-in}

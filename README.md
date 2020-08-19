@@ -16,15 +16,6 @@ You will need a achieve node to complete the testnet challenge. For testing purp
 
 ## Install
 
-Clone this repository on your Docker host, cd into graphprotocol-infrastructure directory and run compose up:
-
-```bash
-git clone https://github.com/butterfly-academy/graphprotocol-infrastructure.git
-cd graphprotocol-infrastucture
-
-ADMIN_USER=admin ADMIN_PASSWORD=admin ETHEREUM_NODE="mainnet:http://95.217.193.89:9545 rinkeby:http://95.217.193.89:8545" ETHEREUM_START_BLOCK=7710671 docker-compose up -d
-```
-
 Prerequisites:
 
 * Docker Engine >= 1.13
@@ -34,8 +25,20 @@ On a fresh Ubuntu server login via ssh and execute the following commands:
 
 ```bash
 apt update -y
-apt install docker-compose httpie
+apt install docker.io docker-compose httpie
 ```
+
+Clone this repository on your Docker host, cd into graphprotocol-infrastructure directory and run compose up:
+
+```bash
+git clone https://github.com/butterfly-academy/graphprotocol-infrastructure.git
+cd graphprotocol-infrastructure
+
+ADMIN_USER=admin ADMIN_PASSWORD=change_me ETHEREUM="mainnet:<ETH_RPC_URL>"  ETHEREUM_START_BLOCK=7710671 docker-compose up -d
+```
+
+The ADMIN_USER and ADMIN_PASSWORD will be used by Grafana, Prometheus and AlertManager.
+
 
 Containers:
 
@@ -62,6 +65,9 @@ http post 127.0.0.1:8020 jsonrpc="2.0" id="2" method="subgraph_deploy" params:='
 
 http post 127.0.0.1:8020 jsonrpc="2.0" method="subgraph_create" id="1" params:='{"name": "molochventures/moloch"}'
 http post 127.0.0.1:8020 jsonrpc="2.0" id="1" method="subgraph_deploy" params:='{"name": "molochventures/moloch", "ipfs_hash": "QmTXzATwNfgGVukV1fX2T6xw9f6LAYRVWpsdXyRWzUR2H9"}'
+
+http post 127.0.0.1:8020 jsonrpc="2.0" method="subgraph_create" id="4" params:='{"name": "jannis/gravity"}'
+http post 127.0.0.1:8020 jsonrpc="2.0" id="4" method="subgraph_deploy" params:='{"name": "jannis/gravity", "ipfs_hash": "QmbeDC4G8iPAUJ6tRBu99vwyYkaSiFwtXWKwwYkoNphV4X"}'
 ```
 
 ## Debugging
