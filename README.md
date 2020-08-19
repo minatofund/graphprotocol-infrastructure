@@ -304,6 +304,7 @@ Copy the Slack Webhook URL into the ***api_url*** field and specify a Slack ***c
 ```yaml
 route:
     receiver: 'slack'
+    group_by: ['...']
 
 receivers:
     - name: 'slack'
@@ -316,6 +317,28 @@ receivers:
 ```
 
 ![Slack Notifications](https://raw.githubusercontent.com/stefanprodan/dockprom/master/screens/Slack_Notifications.png)
+
+
+## Using Email for alerting
+
+```yaml
+route:
+    receiver: 'email'
+    group_by: ['...']
+
+receivers:
+    - name: 'email'
+      email_configs:
+          - to: receiver@email.com
+            from: my@email.com
+            smarthost: mail.server.biz:587
+            auth_username: my@email.com
+            auth_password: password
+            require_tls: true
+```
+
+Note: setting up sending alerts from popular services like Gmail is more complicated due to higer security precautions. You need App passwords and stuff. Take it easy and use a small but standard conform provider.
+
 
 ## Sending metrics to the Pushgateway
 
