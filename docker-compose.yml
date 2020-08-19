@@ -58,9 +58,10 @@ services:
   nginx-ssl:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: nginx-ssl
+    volume:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
     volumes_from:
       - nginx-proxy:rw
-      - /var/run/docker.sock:/tmp/docker.sock:ro
   postgres:
     image: postgres
     container_name: postgres
