@@ -38,10 +38,13 @@ services:
       - monitor-net
   nginx-proxy:
     image: jwilder/nginx-proxy
+    container_name: nginx-proxy
     ports:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - monitor-net
   postgres:
     image: postgres
     container_name: postgres
@@ -148,9 +151,7 @@ services:
       - postgres_pass=${DB_PASS:-let-me-in}
       - postgres_db=${DB_NAME:-graph-node}
       - VIRTUAL_HOST=dashboard.butterfly.academy
-      - LETSENCRYPT_HOST=dashboard.butterfly.academy
       - VIRTUAL_PORT=3000
-      - LETSENCRYPT_EMAIL=sebastian@heyden.eu
     restart: unless-stopped
     expose:
       - 3000
