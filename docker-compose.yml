@@ -58,7 +58,7 @@ services:
   nginx-ssl:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: nginx-ssl
-    volume:
+    volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
     volumes_from:
       - nginx-proxy:rw
