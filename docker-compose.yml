@@ -8,6 +8,9 @@ volumes:
     prometheus_data: {}
     grafana_data: {}
     postgres_data: {}
+    nginx_certs: {}
+    nginx_vhost: {}
+    nginx_html: {}
 
 services:
   graph-node:
@@ -24,8 +27,9 @@ services:
       ethereum: '${ETHEREUM}'
       ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
       RUST_LOG: info
-      VIRTUAL_HOST: query.butterfly.academy
+      VIRTUAL_HOST: ${QUERY_HOST:-query.butterfly.academy}
       VIRTUAL_PORT: 8000
+      LETSENCRYPT_HOST: ${QUERY_HOST:-query.butterfly.academy}
     restart: unless-stopped
     ports:
       - 127.0.0.1:8020:8020
@@ -43,8 +47,19 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - nginx_certs:/etc/nginx/certs
+      - nginx_vhost:/etc/nginx/vhost.d
+      - nginx_html:/usr/share/nginx/html
     networks:
       - monitor-net
+    restart: unless-stopped
+    environment:
+      DEFAULT_EMAIL: ${EMAIL:-sebastian@heyden.eu}"
+  nginx-ssl:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx-ssl
+    volumes_from:
+      - nginx-proxy:rw
   postgres:
     image: postgres
     container_name: postgres
