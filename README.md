@@ -24,7 +24,7 @@ For a free option go to [dotTK](https://www.dot.tk) and find a free domain name.
 
 In the last step choose "use dns" and enter the IP address of your server for 2 subdomains like in the picture. You can choose up to 12 months for free.
 
-![dotTK checkout](dottk_checkoput.png)
+![dotTK checkout](/dottk_checkout.png)
 
 ## Install
 
