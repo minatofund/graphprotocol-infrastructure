@@ -60,6 +60,7 @@ services:
     container_name: nginx-ssl
     volumes_from:
       - nginx-proxy:rw
+      - /var/run/docker.sock:/tmp/docker.sock:ro
   postgres:
     image: postgres
     container_name: postgres
