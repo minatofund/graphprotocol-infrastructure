@@ -25,9 +25,7 @@ services:
       ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
       RUST_LOG: info
       VIRTUAL_HOST: query.butterfly.academy
-      LETSENCRYPT_HOST: query.butterfly.academy
       VIRTUAL_PORT: 8000
-      LETSENCRYPT_EMAIL: sebastian@heyden.eu
     restart: unless-stopped
     ports:
       - 127.0.0.1:8020:8020
@@ -38,6 +36,12 @@ services:
       - 8040
     networks:
       - monitor-net
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
   postgres:
     image: postgres
     container_name: postgres
