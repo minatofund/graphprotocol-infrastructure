@@ -8,13 +8,14 @@ volumes:
     prometheus_data: {}
     grafana_data: {}
     postgres_data: {}
+    postgres2_data: {}
     nginx_certs: {}
     nginx_vhost: {}
     nginx_html: {}
 
 services:
   graph-node:
-    image: graphprotocol/graph-node
+    image: graphprotocol/graph-node:v0.22.0
     container_name: graph-node
     depends_on:
       - postgres
@@ -23,7 +24,7 @@ services:
       postgres_user: ${DB_USER:-graph-node}
       postgres_pass: ${DB_PASS:-let-me-in}
       postgres_db: ${DB_NAME:-graph-node}
-      ipfs: '${IPFS_ENDPOINT:-https://testnet.thegraph.com/ipfs/}'
+      ipfs: '${IPFS_ENDPOINT:-https://ipfs.network.thegraph.com}'
       ethereum: '${ETHEREUM}'
       ETHEREUM_START_BLOCK: ${ETHEREUM_START_BLOCK:-7710671}
       RUST_LOG: info
@@ -84,6 +85,23 @@ services:
       - monitor-net
     expose:
       - 5432
+
+    postgres2:
+      image: postgres
+      container_name: postgres2
+      command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+      restart: unless-stopped
+      environment:
+        POSTGRES_USER: ${DB_USER:-graph-node}
+        POSTGRES_PASSWORD: ${DB_PASS:-db-password}
+        POSTGRES_DB: ${AGENT_DB_NAME:-indexer-agent}
+      volumes:
+        - postgres2_data:/var/lib/postgresql/data
+      networks:
+        - monitor-net
+      expose:
+        - 5432
+      logging: *default-logging
 
   prometheus:
     image: prom/prometheus:v2.20.0
@@ -216,3 +234,71 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+
+  indexer-agent:
+    image: ghcr.io/graphprotocol/indexer-agent:v0.10.0
+    container_name: indexer-agent
+    depends_on:
+      - graph-node
+    expose:
+      - 8000
+      - 7300
+    environment:
+      INDEXER_AGENT_MNEMONIC: ${OPERATOR_SEED_PHRASE}
+      INDEXER_AGENT_INDEXER_ADDRESS: ${STAKING_WALLET_ADDRESS}
+      INDEXER_AGENT_INDEX_NODE_IDS: "graph_node"
+      INDEXER_AGENT_INJECT_DAI: "true"
+      INDEXER_AGENT_ALLOCATION_CLAIM_THRESHOLD: ${QUERY_FEE_REBATE_CLAIM_THRESHOLD:-0}
+      INDEXER_AGENT_ETHEREUM_NETWORK: mainnet
+      INDEXER_AGENT_ETHEREUM: ${ETHEREUM}
+      INDEXER_AGENT_GRAPH_NODE_QUERY_ENDPOINT: http://graph-node:8000
+      INDEXER_AGENT_GRAPH_NODE_STATUS_ENDPOINT: http://graph-node:8030/graphql
+      INDEXER_AGENT_GRAPH_NODE_ADMIN_ENDPOINT: http://graph-node:8020
+      INDEXER_AGENT_PUBLIC_INDEXER_URL: ${PUBLIC_INDEXER_URL}
+      INDEXER_AGENT_INDEXER_GEO_COORDINATES: ${GEO_COORDINATES:37.75100 -97.82200}
+      INDEXER_AGENT_NETWORK_SUBGRAPH_ENDPOINT: https://gateway.network.thegraph.com/network
+      INDEXER_AGENT_POSTGRES_HOST: ${AGENT_DB_HOST:-postgres2}
+      INDEXER_AGENT_POSTGRES_USERNAME: ${DB_USER:-graph-node}
+      INDEXER_AGENT_POSTGRES_PASSWORD: ${DB_PASS:-db-password}
+      INDEXER_AGENT_POSTGRES_DATABASE: ${AGENT_DB_NAME:-indexer-agent}
+    networks:
+      - monitor-net
+    restart: unless-stopped
+    logging: *default-logging
+
+  indexer-service:
+    image: ghcr.io/graphprotocol/indexer-service:v0.10.0
+    container_name: indexer-service
+    depends_on:
+      - graph-node
+      - indexer-agent
+    environment:
+      INDEXER_SERVICE_MNEMONIC: ${OPERATOR_SEED_PHRASE}
+      INDEXER_SERVICE_INDEXER_ADDRESS: ${STAKING_WALLET_ADDRESS}
+      INDEXER_SERVICE_PORT: 7600
+      INDEXER_SERVICE_ETHEREUM_NETWORK: mainnet
+      INDEXER_SERVICE_ETHEREUM: ${ETHEREUM}
+      INDEXER_SERVICE_GRAPH_NODE_QUERY_ENDPOINT: http://graph-node:8000
+      INDEXER_SERVICE_GRAPH_NODE_STATUS_ENDPOINT: http://graph-node:8030/graphql
+      INDEXER_SERVICE_NETWORK_SUBGRAPH_ENDPOINT: ${SUBGRAPH_ENDPOINT:-https://gateway.network.thegraph.com/network}
+      INDEXER_SERVICE_POSTGRES_HOST: postgres2
+      INDEXER_SERVICE_POSTGRES_USERNAME: ${DB_USER:-graph-node}
+      INDEXER_SERVICE_POSTGRES_PASSWORD: ${DB_PASS:-db-password}
+      INDEXER_SERVICE_POSTGRES_DATABASE: ${AGENT_DB_NAME:-indexer-agent}
+      INDEXER_SERVICE_WALLET_WORKER_THREADS: ${WORKER_THREADS_PER_INDEXER_SERVICE:-8}
+      SKIP_EVM_VALIDATION: "true"
+      SERVER_HOST: ${AGENT_DB_HOST:-postgres2}
+      SERVER_PORT: 5432
+      SERVER_DB_USER: ${DB_USER:-graph-node}
+      SERVER_DB_PASSWORD: ${DB_PASS:-db-password}
+      SERVER_DB_NAME: ${AGENT_DB_NAME:-indexer-agent}
+      VIRTUAL_HOST: ${INDEX_HOST}
+      VIRTUAL_PORT: 7600
+      LETSENCRYPT_HOST: ${INDEX_HOST}
+    expose:
+      - 7600
+      - 7300
+    networks:
+      - monitor-net
+    restart: unless-stopped
+    logging: *default-logging
