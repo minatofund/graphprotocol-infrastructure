@@ -14,13 +14,26 @@ volumes:
     nginx_html: {}
 
 services:
+  cli:
+    build:
+      context: ./cli
+    container_name: cli
+    restart: unless-stopped
+    environment:
+      GEO_COORDINATES: ${GEO_COORDINATES:-37.75100 -97.82200}
+    tty: true
+    networks:
+      - monitor-net
+    volumes:
+      - ./cli/scripts:/home/graph/scripts
+
   graph-node:
     image: graphprotocol/graph-node:v0.22.0
     container_name: graph-node
     depends_on:
       - postgres
     environment:
-      postgres_host: postgres:5432
+      postgres_host: postgres
       postgres_user: ${DB_USER:-graph-node}
       postgres_pass: ${DB_PASS:-let-me-in}
       postgres_db: ${DB_NAME:-graph-node}
@@ -34,6 +47,8 @@ services:
     restart: unless-stopped
     ports:
       - 127.0.0.1:8020:8020
+      - 8030:8030
+      - 8000:8000
     expose:
       - 8001
       - 8000
@@ -86,22 +101,21 @@ services:
     expose:
       - 5432
 
-    postgres2:
-      image: postgres
-      container_name: postgres2
-      command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
-      restart: unless-stopped
-      environment:
-        POSTGRES_USER: ${DB_USER:-graph-node}
-        POSTGRES_PASSWORD: ${DB_PASS:-db-password}
-        POSTGRES_DB: ${AGENT_DB_NAME:-indexer-agent}
-      volumes:
-        - postgres2_data:/var/lib/postgresql/data
-      networks:
-        - monitor-net
-      expose:
-        - 5432
-      logging: *default-logging
+  postgres2:
+    image: postgres
+    container_name: postgres2
+    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-graph-node}
+      POSTGRES_PASSWORD: ${DB_PASS:-db-password}
+      POSTGRES_DB: ${AGENT_DB_NAME:-indexer-agent}
+    volumes:
+       - postgres2_data:/var/lib/postgresql/data
+    networks:
+      - monitor-net
+    expose:
+      - 5432
 
   prometheus:
     image: prom/prometheus:v2.20.0
@@ -218,7 +232,7 @@ services:
     image: stefanprodan/caddy
     container_name: caddy
     ports:
-      #- "3000:3000"
+      - "3000:3000"
       #- "8000:8000"
       - "8001:8001"
       - "9090:9090"
@@ -250,12 +264,12 @@ services:
       INDEXER_AGENT_INJECT_DAI: "true"
       INDEXER_AGENT_ALLOCATION_CLAIM_THRESHOLD: ${QUERY_FEE_REBATE_CLAIM_THRESHOLD:-0}
       INDEXER_AGENT_ETHEREUM_NETWORK: mainnet
-      INDEXER_AGENT_ETHEREUM: ${ETHEREUM}
+      INDEXER_AGENT_ETHEREUM: ${TXN_RPC}
       INDEXER_AGENT_GRAPH_NODE_QUERY_ENDPOINT: http://graph-node:8000
       INDEXER_AGENT_GRAPH_NODE_STATUS_ENDPOINT: http://graph-node:8030/graphql
       INDEXER_AGENT_GRAPH_NODE_ADMIN_ENDPOINT: http://graph-node:8020
       INDEXER_AGENT_PUBLIC_INDEXER_URL: ${PUBLIC_INDEXER_URL}
-      INDEXER_AGENT_INDEXER_GEO_COORDINATES: ${GEO_COORDINATES:37.75100 -97.82200}
+      INDEXER_AGENT_INDEXER_GEO_COORDINATES: ${GEO_COORDINATES:-37.75100 -97.82200}
       INDEXER_AGENT_NETWORK_SUBGRAPH_ENDPOINT: https://gateway.network.thegraph.com/network
       INDEXER_AGENT_POSTGRES_HOST: ${AGENT_DB_HOST:-postgres2}
       INDEXER_AGENT_POSTGRES_USERNAME: ${DB_USER:-graph-node}
@@ -264,7 +278,6 @@ services:
     networks:
       - monitor-net
     restart: unless-stopped
-    logging: *default-logging
 
   indexer-service:
     image: ghcr.io/graphprotocol/indexer-service:v0.10.0
@@ -277,7 +290,7 @@ services:
       INDEXER_SERVICE_INDEXER_ADDRESS: ${STAKING_WALLET_ADDRESS}
       INDEXER_SERVICE_PORT: 7600
       INDEXER_SERVICE_ETHEREUM_NETWORK: mainnet
-      INDEXER_SERVICE_ETHEREUM: ${ETHEREUM}
+      INDEXER_SERVICE_ETHEREUM: ${TXN_RPC}
       INDEXER_SERVICE_GRAPH_NODE_QUERY_ENDPOINT: http://graph-node:8000
       INDEXER_SERVICE_GRAPH_NODE_STATUS_ENDPOINT: http://graph-node:8030/graphql
       INDEXER_SERVICE_NETWORK_SUBGRAPH_ENDPOINT: ${SUBGRAPH_ENDPOINT:-https://gateway.network.thegraph.com/network}
@@ -301,4 +314,3 @@ services:
     networks:
       - monitor-net
     restart: unless-stopped
-    logging: *default-logging
